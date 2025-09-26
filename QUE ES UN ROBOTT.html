@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mundo de los Robots - Expoferia Técnica 2025</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        /* Variables de colores */
+        :root {
+            --negro: #0a0a0a;
+            --azul: #0066cc;
+            --gris: #2a2a2a;
+            --gris-claro: #444;
+            --verde-neon: #00ff9d;
+            --blanco: #ffffff;
+        }
+        
+        /* Estilos generales */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--negro);
+            color: var(--blanco);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        section {
+            padding: 80px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        h1, h2, h3 {
+            margin-bottom: 20px;
+            color: var(--verde-neon);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--azul);
+            color: var(--blanco);
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background-color: var(--verde-neon);
+            color: var(--negro);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 157, 0.4);
+        }
+        
+        /* Animaciones */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .slide-up {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .slide-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .zoom-in {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .zoom-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        /* Encabezado/Portada */
+        #portada {
+            position: relative;
+            background: linear-gradient(135deg, var(--negro) 0%, var(--gris) 100%);
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        
+        .portada-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+        
+        .portada-content h1 {
+            margin-bottom: 20px;
+            animation-delay: 0.5s;
+        }
+        
+        .portada-content .subtitulo {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: var(--blanco);
+            animation-delay: 1s;
+        }
+        
+        .portada-content .autor {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            font-size: 1rem;
+            color: var(--gris-claro);
+            animation-delay: 1.5s;
+        }
+        
+        /* Sección 1 - ¿Qué es un robot? */
+        #que-es-robot {
+            background-color: var(--gris);
+        }
+        
+        .accordion {
+            background-color: var(--gris-claro);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .accordion-header {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .accordion-content {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        
+        .accordion-content.active {
+            padding: 20px;
+            max-height: 500px;
+        }
+        
+        /* Sección 2 - Partes de un robot */
+        #partes-robot {
+            background-color: var(--negro);
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .flip-card {
+            background-color: transparent;
+            perspective: 1000px;
+            height: 300px;
+        }
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .flip-card-front {
+            background-color: var(--gris-claro);
+            color: var(--blanco);
+        }
+        
+        .flip-card-front i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--verde-neon);
+        }
+        
+        .flip-card-back {
+            background-color: var(--azul);
+            color: var(--blanco);
+            transform: rotateY(180deg);
+        }
+        
+        /* Sección 3 - Ejemplo práctico */
+        #ejemplo-practico {
+            background-color: var(--gris);
+        }
+        
+        .ejemplo-content {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 40px;
+        }
+        
+        .ejemplo-img {
+            flex: 1;
+            min-width: 300px;
+            background-color: var(--gris-claro);
+            height: 300px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5rem;
+            color: var(--verde-neon);
+        }
+        
+        .ejemplo-text {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .pasos-lista {
+            list-style: none;
+            margin-top: 20px;
+        }
+        
+        .paso {
+            padding: 15px;
+            background-color: var(--gris-claro);
+            margin-bottom: 10px;
+            border-radius: 5px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        
+        .paso.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Sección 4 - Robots en la vida cotidiana */
+        #robots-vida {
+            background-color: var(--negro);
+        }
+        
+        .carousel {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+        
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        
+        .carousel-item {
+            min-width: 100%;
+            padding: 30px;
+            background-color: var(--gris-claro);
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .carousel-item img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--gris-claro);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .indicator.active {
+            background-color: var(--verde-neon);
+        }
+        
+        /* Sección 5 - Frase motivadora */
+        #frase-motivadora {
+            background-color: var(--gris);
+            text-align: center;
+        }
+        
+        .frase-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .frase-content p {
+            font-size: 2rem;
+            font-style: italic;
+            color: var(--verde-neon);
+            text-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+        }
+        
+        .btn-descargar {
+            margin-top: 40px;
+            background-color: var(--verde-neon);
+            color: var(--negro);
+        }
+        
+        .btn-descargar:hover {
+            background-color: var(--azul);
+            color: var(--blanco);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--gris);
+            color: var(--blanco);
+            text-align: center;
+            padding: 30px 20px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            section {
+                padding: 60px 15px;
+            }
+            
+            .frase-content p {
+                font-size: 1.5rem;
+            }
+            
+            .ejemplo-content {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+            
+            .flip-card {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Encabezado/Portada -->
+    <section id="portada">
+        <div id="particles-js"></div>
+        <div class="container">
+            <div class="portada-content">
+                <h1 class="fade-in">Mundo de los Robots</h1>
+                <p class="subtitulo fade-in">La tecnología que hoy soñamos, mañana nos acompaña</p>
+                <p class="autor fade-in">Por Dayron – Expoferia Técnica 2025</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección 1 - ¿Qué es un robot? -->
+    <section id="que-es-robot">
+        <div class="container">
+            <h2 class="slide-up">¿Qué es un robot?</h2>
+            <p class="slide-up">Un robot es una máquina programable capaz de realizar tareas de manera autónoma o semiautónoma. Combina sensores, procesadores y actuadores para interactuar con su entorno.</p>
+            
+            <div class="accordion slide-up">
+                <div class="accordion-header">
+                    <h3>Leer más</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="accordion-content">
+                    <p>Los robots pueden variar desde simples máquinas con un único propósito hasta sistemas complejos con inteligencia artificial. Se utilizan en una amplia gama de aplicaciones, desde la manufactura hasta la exploración espacial.</p>
+                    <p>La robótica es un campo interdisciplinario que combina ingeniería mecánica, eléctrica, electrónica y ciencias de la computación. Los avances en esta área están transformando nuestra forma de vivir y trabajar.</p>
+                    <p>Hoy en día, los robots no solo realizan tareas repetitivas en fábricas, sino que también asisten en cirugías médicas, exploran lugares peligrosos y hasta nos ayudan en nuestras casas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección 2 - Partes de un robot -->
+    <section id="partes-robot">
+        <div class="container">
+            <h2 class="slide-up">Partes de un robot</h2>
+            <div class="cards-container">
+                <!-- Tarjeta 1 -->
+                <div class="flip-card slide-up">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <i class="fas fa-battery-full"></i>
+                            <h3>Fuente de energía</h3>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Fuente de energía</h3>
+                            <p>Proporciona la energía necesaria para que el robot funcione. Puede ser baterías, paneles solares o conexión eléctrica directa.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tarjeta 2 -->
+                <div class="flip-card slide-up">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <i class="fas fa-code"></i>
+                            <h3>Programación</h3>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Programación</h3>
+                            <p>El software que controla el comportamiento del robot. Define cómo responde a los estímulos y realiza sus tareas.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tarjeta 3 -->
+                <div class="flip-card slide-up">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <i class="fas fa-robot"></i>
+                            <h3>Estructura física</h3>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Estructura física</h3>
+                            <p>El cuerpo o chasis del robot. Proporciona soporte mecánico y determina su forma, tamaño y capacidades de movimiento.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tarjeta 4 -->
+                <div class="flip-card slide-up">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <i class="fas fa-microchip"></i>
+                            <h3>Electrónica</h3>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Electrónica</h3>
+                            <p>Circuitos y componentes que procesan señales y controlan las operaciones del robot. Incluye microcontroladores y placas de control.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tarjeta 5 -->
+                <div class="flip-card slide-up">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <i class="fas fa-satellite-dish"></i>
+                            <h3>Sensores y actuadores</h3>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Sensores y actuadores</h3>
+                            <p>Los sensores reciben información del entorno (luz, sonido, temperatura), mientras que los actuadores permiten al robot moverse o manipular objetos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección 3 - Ejemplo práctico -->
+    <section id="ejemplo-practico">
+        <div class="container">
+            <h2 class="slide-up">Ejemplo práctico: Mi Robot</h2>
+            <div class="ejemplo-content">
+                <div class="ejemplo-img slide-up">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="ejemplo-text slide-up">
+                    <p>Carro a control por Bluetooth desde el celular</p>
+                    <button class="btn" id="btn-funcionamiento">Ver funcionamiento</button>
+                    
+                    <ul class="pasos-lista" id="pasos-lista">
+                        <!-- Los pasos se agregarán dinámicamente con JavaScript -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección 4 - Robots en la vida cotidiana -->
+    <section id="robots-vida">
+        <div class="container">
+            <h2 class="slide-up">Robots en la vida cotidiana</h2>
+            <div class="carousel">
+                <div class="carousel-inner">
+                    <!-- Slide 1 -->
+                    <div class="carousel-item">
+                        <div class="carousel-img">
+                            <i class="fas fa-hospital" style="font-size: 5rem; color: var(--verde-neon);"></i>
+                        </div>
+                        <h3>Medicina</h3>
+                        <p>Los robots asistenciales ayudan en cirugías de precisión, rehabilitación de pacientes y distribución de medicamentos en hospitales.</p>
+                    </div>
+                    
+                    <!-- Slide 2 -->
+                    <div class="carousel-item">
+                        <div class="carousel-img">
+                            <i class="fas fa-rocket" style="font-size: 5rem; color: var(--verde-neon);"></i>
+                        </div>
+                        <h3>Exploración espacial</h3>
+                        <p>Rovers como Perseverance exploran Marte, recogen muestras y envían datos valiosos sobre el planeta rojo a la Tierra.</p>
+                    </div>
+                    
+                    <!-- Slide 3 -->
+                    <div class="carousel-item">
+                        <div class="carousel-img">
+                            <i class="fas fa-industry" style="font-size: 5rem; color: var(--verde-neon);"></i>
+                        </div>
+                        <h3>Industria</h3>
+                        <p>Brazos robóticos ensamblan productos con precisión en líneas de producción, aumentando la eficiencia y reduciendo errores.</p>
+                    </div>
+                    
+                    <!-- Slide 4 -->
+                    <div class="carousel-item">
+                        <div class="carousel-img">
+                            <i class="fas fa-home" style="font-size: 5rem; color: var(--verde-neon);"></i>
+                        </div>
+                        <h3>Hogar</h3>
+                        <p>Aspiradoras robóticas, asistentes virtuales y sistemas de seguridad automatizados hacen nuestras vidas más cómodas y seguras.</p>
+                    </div>
+                </div>
+                
+                <div class="carousel-controls">
+                    <button class="btn" id="carousel-prev"><i class="fas fa-chevron-left"></i> Anterior</button>
+                    <button class="btn" id="carousel-next">Siguiente <i class="fas fa-chevron-right"></i></button>
+                </div>
+                
+                <div class="carousel-indicators">
+                    <span class="indicator active" data-slide="0"></span>
+                    <span class="indicator" data-slide="1"></span>
+                    <span class="indicator" data-slide="2"></span>
+                    <span class="indicator" data-slide="3"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección 5 - Frase motivadora -->
+    <section id="frase-motivadora">
+        <div class="container">
+            <div class="frase-content">
+                <p class="zoom-in">"Los robots no vienen a reemplazarnos, vienen a complementarnos"</p>
+                <button class="btn btn-descargar" id="btn-descargar-pdf">Descargar resumen en PDF</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>Expoferia Técnica 2025 – Colegio Unión Latinoamericana N°1235</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Inicializar partículas en el fondo
+        document.addEventListener('DOMContentLoaded', function() {
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 80, density: { enable: true, value_area: 800 } },
+                    color: { value: "#00ff9d" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.5, random: true },
+                    size: { value: 3, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: "#00ff9d",
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: "none",
+                        random: true,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "repulse" },
+                        onclick: { enable: true, mode: "push" },
+                        resize: true
+                    }
+                },
+                retina_detect: true
+            });
+            
+            // Animaciones al hacer scroll
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+            
+            // Observar elementos con clases de animación
+            document.querySelectorAll('.fade-in, .slide-up, .zoom-in').forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Acordeón de la sección 1
+            const accordionHeader = document.querySelector('.accordion-header');
+            const accordionContent = document.querySelector('.accordion-content');
+            const accordionIcon = document.querySelector('.accordion-header i');
+            
+            accordionHeader.addEventListener('click', () => {
+                accordionContent.classList.toggle('active');
+                accordionIcon.classList.toggle('fa-chevron-down');
+                accordionIcon.classList.toggle('fa-chevron-up');
+            });
+            
+            // Funcionalidad del carrusel
+            const carouselInner = document.querySelector('.carousel-inner');
+            const carouselItems = document.querySelectorAll('.carousel-item');
+            const prevButton = document.getElementById('carousel-prev');
+            const nextButton = document.getElementById('carousel-next');
+            const indicators = document.querySelectorAll('.indicator');
+            
+            let currentSlide = 0;
+            const totalSlides = carouselItems.length;
+            
+            function updateCarousel() {
+                carouselInner.style.transform = `translateX(-${currentSlide * 100}%)`;
+                
+                // Actualizar indicadores
+                indicators.forEach((indicator, index) => {
+                    indicator.classList.toggle('active', index === currentSlide);
+                });
+            }
+            
+            prevButton.addEventListener('click', () => {
+                currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+                updateCarousel();
+            });
+            
+            nextButton.addEventListener('click', () => {
+                currentSlide = (currentSlide + 1) % totalSlides;
+                updateCarousel();
+            });
+            
+            // Navegación por indicadores
+            indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => {
+                    currentSlide = index;
+                    updateCarousel();
+                });
+            });
+            
+            // Carrusel automático
+            setInterval(() => {
+                currentSlide = (currentSlide + 1) % totalSlides;
+                updateCarousel();
+            }, 5000);
+            
+            // Swipe para móviles
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            carouselInner.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+            
+            carouselInner.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
+            
+            function handleSwipe() {
+                if (touchEndX < touchStartX - 50) {
+                    // Swipe izquierda
+                    currentSlide = (currentSlide + 1) % totalSlides;
+                } else if (touchEndX > touchStartX + 50) {
+                    // Swipe derecha
+                    currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+                }
+                updateCarousel();
+            }
+            
+            // Funcionalidad de la sección 3 - Ejemplo práctico
+            const btnFuncionamiento = document.getElementById('btn-funcionamiento');
+            const pasosLista = document.getElementById('pasos-lista');
+            
+            const pasos = [
+                "Paso 1: Diseñar y construir la estructura del carro robótico",
+                "Paso 2: Instalar los motores y ruedas para el movimiento",
+                "Paso 3: Conectar el módulo Bluetooth al microcontrolador",
+                "Paso 4: Programar el microcontrolador para recibir comandos",
+                "Paso 5: Desarrollar una aplicación móvil para control remoto",
+                "Paso 6: Probar y calibrar el funcionamiento del robot"
+            ];
+            
+            btnFuncionamiento.addEventListener('click', () => {
+                if (pasosLista.children.length === 0) {
+                    pasos.forEach((paso, index) => {
+                        const li = document.createElement('li');
+                        li.className = 'paso';
+                        li.textContent = paso;
+                        pasosLista.appendChild(li);
+                        
+                        // Animación secuencial
+                        setTimeout(() => {
+                            li.classList.add('visible');
+                        }, index * 300);
+                    });
+                    
+                    btnFuncionamiento.textContent = 'Ocultar funcionamiento';
+                } else {
+                    pasosLista.innerHTML = '';
+                    btnFuncionamiento.textContent = 'Ver funcionamiento';
+                }
+            });
+            
+            // Generar PDF
+            const btnDescargarPDF = document.getElementById('btn-descargar-pdf');
+            
+            btnDescargarPDF.addEventListener('click', () => {
+                // Usar jsPDF para generar el PDF
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Título
+                doc.setFontSize(20);
+                doc.setTextColor(0, 102, 204);
+                doc.text("Mundo de los Robots", 105, 20, { align: 'center' });
+                
+                // Línea divisoria
+                doc.setDrawColor(0, 102, 204);
+                doc.line(20, 25, 190, 25);
+                
+                // Definición de robot
+                doc.setFontSize(16);
+                doc.setTextColor(0, 0, 0);
+                doc.text("¿Qué es un robot?", 20, 40);
+                
+                doc.setFontSize(12);
+                const definicion = "Un robot es una máquina programable capaz de realizar tareas de manera autónoma o semiautónoma. Combina sensores, procesadores y actuadores para interactuar con su entorno.";
+                doc.text(definicion, 20, 50, { maxWidth: 170 });
+                
+                // Línea divisoria
+                doc.line(20, 70, 190, 70);
+                
+                // Partes de un robot
+                doc.setFontSize(16);
+                doc.text("Partes de un robot:", 20, 85);
+                
+                doc.setFontSize(12);
+                const partes = [
+                    "• Fuente de energía: Proporciona la energía necesaria para que el robot funcione.",
+                    "• Programación: El software que controla el comportamiento del robot.",
+                    "• Estructura física: El cuerpo o chasis del robot.",
+                    "• Electrónica: Circuitos y componentes que procesan señales.",
+                    "• Sensores y actuadores: Permiten percibir el entorno y realizar acciones."
+                ];
+                
+                partes.forEach((parte, index) => {
+                    doc.text(parte, 25, 95 + (index * 10), { maxWidth: 160 });
+                });
+                
+                // Línea divisoria
+                doc.line(20, 155, 190, 155);
+                
+                // Ejemplo práctico
+                doc.setFontSize(16);
+                doc.text("Ejemplo práctico:", 20, 170);
+                
+                doc.setFontSize(12);
+                doc.text("Carro a control por Bluetooth desde el celular", 20, 180);
+                
+                // Línea divisoria
+                doc.line(20, 195, 190, 195);
+                
+                // Frase motivadora
+                doc.setFontSize(14);
+                doc.setTextColor(0, 102, 204);
+                doc.text('"Los robots no vienen a reemplazarnos, vienen a complementarnos"', 105, 210, { align: 'center' });
+                
+                // Pie de página
+                doc.setFontSize(10);
+                doc.setTextColor(100, 100, 100);
+                doc.text("Expoferia Técnica 2025 – Colegio Unión Latinoamericana N°1235", 105, 280, { align: 'center' });
+                
+                // Guardar PDF
+                doc.save('Mundo-de-los-Robots-Resumen.pdf');
+            });
+        });
+    </script>
+</body>
+</html>
